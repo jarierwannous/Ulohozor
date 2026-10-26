@@ -1,83 +1,51 @@
-# Úlohozor — stránka na zadávanie úloh
+# Úlohozor – index.html a admin.html
 
-## Čo už stránka vie
-- Žiak zadá 12-miestny kód. Nemusí sa prihlasovať ani vyberať tému.
-- Učiteľ sa prihlási cez Supabase Auth; oprávnenie navyše overuje tabuľka uz_admins.
-- Import témy a úloh z JSON alebo z textu oddeleného riadkami ---.
-- Editor vytvorí prenosný JSON bez ručného písania jeho štruktúry.
-- Každá úloha dostane náhodný globálne jedinečný kód. Pomlčky ani veľkosť písmen pri zadávaní neprekážajú.
-- Jednotlivé aj hromadné losovanie s krátkou animáciou kolesa. Výsledok sa uloží pred zobrazením animácie, takže pri zatvorení okna sa nestratí.
-- Vyvážené priraďovanie (najmenej používané úlohy v skupine), bez opakovania, alebo náhodne s opakovaním.
-- História podľa témy a skupiny, export CSV, stiahnutie pôvodných úloh aj s riešeniami.
-- Skrytie témy zneplatní prístup cez jej kódy do opätovného sprístupnenia.
-- Tlač zadania / uloženie do PDF cez prehliadač.
+Táto verzia je pripravená pre tvoj existujúci GitHub Pages a Supabase projekt.
 
-## 1. Supabase
-Odporúčanie: vytvorte samostatný projekt pre školské zadania. Pri použití existujúceho projektu majú tabuľky prefix uz_, aby nekolidovali s inými aplikáciami.
-1. V SQL Editore spustite celý supabase.sql. Opätovné spustenie nemaže dáta.
-2. Authentication → Users: vytvorte učiteľský účet s e-mailom a heslom a potvrdeným e-mailom. Ak nepotrebujete verejnú registráciu, vypnite ju v nastaveniach Auth.
-3. Skopírujte UUID tohto používateľa a v SQL Editore spustite:
-   insert into public.uz_admins(user_id) values ('UUID-UCTU') on conflict do nothing;
-4. Z nastavení projektu získajte Project URL a publishable key (alebo starší anon key).
-5. V nastavení stránky ich môžete najprv skúšobne zadať. Skúšobná konfigurácia je uložená len v sessionStorage aktuálnej karty. Odhlási sa pri zrušení tejto skúšobnej konfigurácie.
-6. Prihláste sa, importujte vzor, priraďte skúšobnému menu úlohu. V anonymnom okne overte otvorenie zadania kódom po nastavení trvalej konfigurácie.
+## Nahratie na GitHub
+1. Rozbaľ ZIP a nahraj všetky súbory z neho priamo do hlavného priečinka existujúceho repozitára. Nenahrávaj celý priečinok ani ZIP.
+2. Potvrď nahradenie existujúcich súborov a Commit changes.
+3. Počkaj na úspešné nasadenie GitHub Pages. Otvor stránku a obnov ju cez Ctrl + Shift + R.
+4. Žiakom pošli základnú adresu stránky (alebo adresu končiacu /index.html).
+5. Ty otvor rovnakú adresu s /admin.html na konci a prihlás sa svojím učiteľským účtom.
 
-NIKDY nevkladajte service_role ani sb_secret_ kľúč do webovej stránky. Verejný kľúč je určený na použitie v prehliadači; ochranu vykonávajú databázové oprávnenia.
+Príklad adries (nahraď svojim používateľom a repozitárom):
+- Žiaci: https://POUZIVATEL.github.io/REPOZITAR/index.html
+- Učiteľ: https://POUZIVATEL.github.io/REPOZITAR/admin.html
 
-## 2. Verejná stránka (napríklad GitHub Pages)
-1. Rozbaľte ulohozor.zip.
-2. V config.js vyplňte URL a verejný kľúč, alebo ho stiahnite cez formulár Nastavenie.
-3. Nahrajte index.html, style.css, app.js, config.js a pomocné súbory do priečinka publikovaného cez GitHub Pages. Žiadny build netreba.
-4. Žiakom dajte adresu stránky. Pre administráciu použite tú istú adresu s #admin.
-5. Súkromný náhľad v ChatGPT nie je žiacka verejná adresa. Na používanie s triedou treba verejný hosting a pripojený Supabase projekt.
+Dôležité súbory: index.html, student.js, admin.html, admin.js, style.css, config.js.
+NAVOD.md je tento návod. supabase.sql je pôvodná inicializácia pre prípad úplne nového projektu.
+Súbor .nojekyll zabezpečí jednoduché publikovanie statických súborov; na fungovanie týchto názvov súborov nie je nevyhnutný.
+Pôvodný app.js sa už nenačítava. Môže zostať v repozitári, ale nová verzia ho nepoužíva. Staré ulohozor.zip a app.js môžeš neskôr odstrániť, aby nezostali na stiahnutie staré verzie.
 
-Balík obsahuje všeobecné SQL a dokumentáciu, nie heslá ani údaje žiakov. Na hostingu môžete pomocné súbory ponechať alebo odstrániť, ale pri odstránení nebudú fungovať ich odkazy v nastavení.
+## Supabase netreba nastavovať znovu
+Pripojenie v config.js už smeruje na tvoj projekt. Používajú sa rovnaké tabuľky uz_topics, uz_tasks, uz_assignments a uz_admins aj rovnaké funkcie. Existujúce témy, úlohy, kódy, priradenia a učiteľské účty zostávajú zachované.
+SQL netreba znovu spúšťať. Nevymazávaj tabuľky ani používateľov.
 
-## 3. Import a tvorba
-JSON má tvar:
-```json
-{
-  "topic": "Newtonove zákony",
-  "subject": "Fyzika",
-  "tasks": [
-    {"title": "Vozík", "body": "Na vozík s hmotnosťou 4 kg pôsobí sila 12 N. Určte zrýchlenie.", "solution": "3 m/s²"}
-  ]
-}
-```
-Môžete požiadať ChatGPT: „Vytvor mi JSON pre Úlohozor: topic, subject, tasks; každá úloha má title, body, solution. Riešenia patria iba do solution.“
+## Čo vidí žiak
+Na index.html je iba zadanie kódu a samotná úloha. Nie je tam prihlasovanie, administrácia ani nastavenie Supabase. Žiak nepotrebuje účet. Stránka neposiela prihlasovací token a nečíta úložisko prehliadača. Rovnaký platný kód otvorí rovnaké zadanie na inom zariadení alebo v inkognite.
+Pri chybnom kóde alebo skrytej téme sa zobrazí vysvetlenie. Pri výpadku internetu sa zobrazí chyba, nie nová ukážková databáza.
 
-Limity: 300 úloh na import, súbor do 5 MB, zadanie do 30 000 znakov. Text je obyčajný text so zachovanými novými riadkami a znakmi ako ², π, √. LaTeX, HTML, obrázky, prílohy a automatické delenie PDF/Word nie sú v tejto verzii implementované. Obsah PDF je potrebné previesť do JSON alebo vložiť do textového editora.
+## Čo vidí učiteľ
+Na admin.html sa prihlásiš e-mailom a heslom učiteľského účtu zo Supabase. Po prihlásení sa overí členstvo v uz_admins. Potom môžeš importovať témy, vytvárať JSON súbory, losovať a prezerať uložené priradenia.
+Prihlásenie sa uchováva v aktuálnej karte prehliadača; v inkognite alebo novej nezávislej karte sa môžeš musieť prihlásiť znova. To sa týka iba učiteľa. Úlohy a priradenia sú vždy v Supabase, nie v sessionStorage.
 
-Každý import tvorí novú tému s novými kódmi. Existujúce zadania sú nemenné, aby sa po rozdaní kódov nezmenilo ich znenie. Na novú verziu importujte novú tému a starú podľa potreby skryte.
+## Import a losovanie
+1. V administrácii otvor Importovať úlohy a vyber svoj JSON.
+2. Skontroluj náhľad a klikni Importovať a vytvoriť kódy.
+3. V téme zadaj názov skupiny a mená po riadkoch.
+4. Vyber vyvážené rozdelenie, bez opakovania alebo úplnú náhodu.
+5. Spusti losovanie. Najprv sa priradenia uložia do Supabase, potom prebehne krátka animácia.
+6. Žiakom daj ich kódy. Zoznam môžeš exportovať do CSV.
+Rovnaké meno v rovnakej téme a skupine ponechá pôvodné priradenie. Pre novú sériu použi nový názov skupiny. Pri menovcoch doplň rozlišovací údaj.
 
-## 4. Priraďovanie
-- Každé meno vložte na samostatný riadok. Z Excelu môžete vložiť jeden stĺpec.
-- Názov skupiny môže byť napríklad „2.B – október“. Názov je súčasťou identity priradenia.
-- Rovnaké meno v tej istej téme a skupine si zachová pôvodné priradenie. Pre novú sériu použite nový názov skupiny.
-- Mená sa porovnávajú presne po odstránení okrajových medzier, vrátane veľkosti písmen. Menovcov rozlíšte dodatkom.
-- Jedna úloha má jeden kód. Pri opakovaní úlohy dostanú viacerí žiaci rovnaký kód, ako pri rovnakom variante písomky.
-- Koleso je krátka animácia k losovaniu celej skupiny, neukazuje jednotlivé mená na výsekoch. Výsledok vyberá databáza a zobrazí sa v tabuľke.
-- Pri nedostatku úloh v režime bez opakovania sa celá požiadavka zruší, čiže nevznikne čiastočne priradená trieda.
-- CSV obsahuje mená. Uchovávajte ho spolu s ostatnou školskou dokumentáciou.
+Formát importu sa nemení:
+{"topic":"Názov témy","subject":"Matematika","tasks":[{"title":"Úloha 1","body":"Zadanie","solution":"Riešenie iba pre učiteľa"}]}
 
-## 5. Údaje a prístup
-Všetci učitelia uvedení v uz_admins majú spoločnú knižnicu, vidia všetky priradenia a môžu sprístupňovať/skryť témy. Ak chcete oddelené dáta učiteľov, treba doplniť vlastníctvo a politiky prístupu.
+## Starý ukážkový režim
+Nová verzia ukážkový režim vôbec nemá. Staré lokálne ukážkové údaje nevymazáva ani automaticky neimportuje. Ak si v starej verzii pracoval v ukážke, uchovaj si exporty pred zmenami alebo vymazaním údajov prehliadača. Kódy vytvorené iba lokálne sa v Supabase automaticky nenachádzajú; po importe úloh do Supabase vzniknú nové kódy.
 
-Anonymný používateľ nemôže čítať tabuľky. Má len funkciu uz_lookup, ktorá pri presnom kóde vráti názov témy, názov úlohy, zadanie a kód. Nevracia mená ani riešenia. Kto má kód, vie zobraziť zadanie a môže ho preposlať. Kód preto nie je overenie totožnosti žiaka.
-
-Funkcie na zápis overujú administrátora na serveri. Losovanie aj import sú transakčné. UUID náhodné kódy majú kontrolu unikátnosti a import prípadnú kolíziu zopakuje. Na anonymné vyhľadávanie zatiaľ nie je aplikačný limit počtu pokusov; ak bude stránka veľmi verejne propagovaná, pridajte serverovú ochranu proti automatizovanému skúšaniu.
-
-Ukážkový režim používa localStorage jedného prehliadača. Je určený na skúšanie, nie na zadávanie skutočným žiakom. Nemieša sa so Supabase dátami ani sa doň automaticky neprenesie.
-
-Zabudnuté heslo môže správca upraviť v Supabase; samoobslužný reset hesla táto verzia neobsahuje. Odpovede žiakov sa neodovzdávajú ani nehodnotia.
-
-## Overenie pri nasadení
-- Neprihlásený návštevník cez kód vidí zadanie, nie solution ani student_name.
-- Priamy anonymný prístup k uz_assignments a uz_tasks je odmietnutý.
-- Prihlásený účet bez uz_admins nevidí údaje a nemôže importovať ani priraďovať.
-- Rovnaké priraďovanie zopakované dvakrát nezmení pôvodné kódy.
-- Skrytá téma nevydáva zadanie cez kód.
-
-SQL návrh vychádza z dokumentácie Supabase:
-https://supabase.com/docs/guides/database/functions
-https://supabase.com/docs/guides/database/postgres/row-level-security
+## Prístup a súkromie
+Samostatné stránky uľahčujú používanie. Ochranu údajov stále zabezpečuje Supabase: anonymná funkcia uz_lookup vracia iba zadanie podľa kódu, nie mená ani učiteľské riešenia. Priamy prístup k administrátorským tabuľkám a zápis vyžadujú administrátorský účet.
+config.js obsahuje iba verejný publishable kľúč; nikdy doň nevkladaj service_role ani secret key.
+Zadaním kódu sa neoveruje totožnosť žiaka; kto pozná kód, vie si zobraziť zadanie.
